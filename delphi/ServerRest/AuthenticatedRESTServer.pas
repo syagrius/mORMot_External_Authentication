@@ -72,7 +72,7 @@ uses System.Hash, ImpCustomRestMethods, InterfaceCustomRestMethods, System.IOUti
 function TAuthenticatedRESTServer.Authentication(aParams: TSQLRestServerURIContext): Integer;
   function ValidaConexoesRestantes: Boolean;
   begin
-    if FUsersConnection.ContainsKey(aParams.SessionUserName, aParams.SessionRemoteIP) then
+    if FUsersConnection.ContainsKey(aParams.SessionUserName, aParams.RemoteIP) then
     begin
       Result := ((Self.RemainingConnections + 1) >= 0)
     end
@@ -95,14 +95,14 @@ begin
   SQLite3Log.Enter.Log(sllInfo,format('Read Usuario: %s',[Usuario]));
   if ValidaConexoesRestantes then
   begin
-    SQLite3Log.Enter.Log(sllInfo,format('Número de Conexões: %d',[Self.CountConnection]));
+    SQLite3Log.Enter.Log(sllInfo,format('Nï¿½mero de Conexï¿½es: %d',[Self.CountConnection]));
 
     aParams.Results([Self.RemainingConnections]);
     Result := 200;
   end
   else
   begin
-    SQLite3Log.Enter.Log(sllInfo,'Superado o Máximo de conexões - 405');
+    SQLite3Log.Enter.Log(sllInfo,'Superado o Mï¿½ximo de conexï¿½es - 405');
     Result := 405;
     aParams.Results([-1]);
   end;

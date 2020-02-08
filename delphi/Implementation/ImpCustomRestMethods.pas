@@ -27,7 +27,9 @@ type
   TCustomRestMethods = class(TInjectableObjectRest, ICustomRestMethods)
   private
     class procedure CustomWriter(const aWriter: TTextWriter; const aValue);
-    class function CustomReader(P: PUTF8Char; var aValue; out aValid: Boolean): PUTF8Char;
+    class function CustomReader(P: PUTF8Char; var aValue; out aValid: Boolean
+        {$ifndef NOVARIANTS}; CustomVariantOptions: PDocVariantOptions{$endif}):
+        PUTF8Char;
   public
     function HelloWorld(): string;
     function Sum(val1, val2: Double): Double;
@@ -39,7 +41,7 @@ type
   end;
 
 implementation
-uses DateUtils, SynCrypto;
+uses DateUtils, SynCrypto, SynTable;
 
 { TCustomRecord }
 
@@ -69,12 +71,12 @@ begin
   Result := val1 + val2;
 end;
 
-class function TCustomRestMethods.CustomReader(P: PUTF8Char; var aValue; out aValid: Boolean): PUTF8Char;
+class function TCustomRestMethods.CustomReader(P: PUTF8Char; var aValue; out aValid: Boolean  {$ifndef NOVARIANTS}; CustomVariantOptions: PDocVariantOptions{$endif}): PUTF8Char;
 var
   aLicensa: TDTOLicense absolute aValue;
   Values: TPUtf8CharDynArray;
 begin
-  Result := JSONDecode(P,['ID','UpdateDate','DueDate', 'UserLimit', 'Person'],Values);
+  Result := JSONDecode(P,['ID','UpdateDate','DueDate', 'UserLimit', 'Person'],@Values);
 
   if Result = nil then
     aValid := false else begin
